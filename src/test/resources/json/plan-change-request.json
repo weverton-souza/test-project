@@ -1,0 +1,16 @@
+{
+  "numeroContrato": "59942288",
+  "referenciaMovimentacao": "2024-01-11",
+  "dataMovimento": "2024-01-11",
+  "codigoUsuario": "SERVICO",
+  "tipoOperacao": "5",
+  "numeroAssociadoOuNumeroCarteiraTitular": "9941645535545001",
+  "codigoPlanoAntigo": "SSS",
+  "codigoPlanoNovo": "SSD",
+  "dataLimiteEnvio": "2024-01-11",
+  "dataMigracao": "2024-01-11",
+  "abrangencia": "T",
+  "formaFechamentoLote": 1,
+  "formaAgrupamentoMovimentacoes": 1,
+  "formaValidacaoCriticas": 1
+}
