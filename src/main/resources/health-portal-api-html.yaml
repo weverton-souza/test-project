@@ -1,25 +1,44 @@
-
 parameters:
   accessToken:
     name: "access-token"
     in: "header"
     required: true
     type: "string"
+    description: "Token de acesso para autenticação do usuário"
   company:
     name: "company"
     in: "header"
     required: true
     type: "string"
+    description: "Identificador da empresa requisitante"
   type:
     name: "type"
     in: "header"
     required: true
     type: "string"
+    description: "Tipo de operação a ser realizada"
   code:
     name: "code"
     in: "header"
     required: true
     type: "string"
+    description: "Código específico para a operação requisitada"
+  pageNumber:
+    name: "pageNumber"
+    in: "query"
+    required: false
+    type: "integer"
+    format: "int32"
+    description: "Número da página para a paginação de resultados"
+    default: 0
+  pageSize:
+    name: "pageSize"
+    in: "query"
+    required: false
+    type: "integer"
+    format: "int32"
+    description: "Tamanho da página para a paginação de resultados"
+    default: 15
 
 paths:
   /enrollments/beneficiary:
@@ -62,7 +81,20 @@ paths:
           schema:
             $ref: "#/definitions/HealthPortalBasicResponseError"
       x-amazon-apigateway-integration:
-        $ref: "#/definitions/AmazonApiGatewayIntegration/x-amazon-apigateway-integration"
+        connectionId: "${stageVariables.vpcId}"
+        httpMethod: "POST"
+        uri: "https://${stageVariables.url}/enrollments/beneficiary"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.type: "method.request.header.type"
+          integration.request.header.access-token: "method.request.header.access-token"
+          integration.request.header.company: "method.request.header.company"
+          integration.request.header.code: "method.request.header.code"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
     put:
       tags:
         - "Enrollment Manager Resources"
@@ -101,7 +133,20 @@ paths:
           schema:
             $ref: "#/definitions/HealthPortalBasicResponseError"
       x-amazon-apigateway-integration:
-        $ref: "#/definitions/AmazonApiGatewayIntegration/x-amazon-apigateway-integration"
+        connectionId: "${stageVariables.vpcId}"
+        httpMethod: "PUT"
+        uri: "https://${stageVariables.url}/enrollments/beneficiary"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.type: "method.request.header.type"
+          integration.request.header.access-token: "method.request.header.access-token"
+          integration.request.header.company: "method.request.header.company"
+          integration.request.header.code: "method.request.header.code"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
     delete:
       tags:
         - "Enrollment Manager Resources"
@@ -140,7 +185,20 @@ paths:
           schema:
             $ref: "#/definitions/HealthPortalBasicResponseError"
       x-amazon-apigateway-integration:
-        $ref: "#/definitions/AmazonApiGatewayIntegration/x-amazon-apigateway-integration"
+        connectionId: "${stageVariables.vpcId}"
+        httpMethod: "DELETE"
+        uri: "https://${stageVariables.url}/enrollments/beneficiary"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.type: "method.request.header.type"
+          integration.request.header.access-token: "method.request.header.access-token"
+          integration.request.header.company: "method.request.header.company"
+          integration.request.header.code: "method.request.header.code"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
   /enrollments/dependent:
     post:
       tags:
@@ -180,7 +238,20 @@ paths:
           schema:
             $ref: "#/definitions/HealthPortalBasicResponseError"
       x-amazon-apigateway-integration:
-        $ref: "#/definitions/AmazonApiGatewayIntegration/x-amazon-apigateway-integration"
+        connectionId: "${stageVariables.vpcId}"
+        httpMethod: "POST"
+        uri: "https://${stageVariables.url}/enrollments/dependent"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.type: "method.request.header.type"
+          integration.request.header.access-token: "method.request.header.access-token"
+          integration.request.header.company: "method.request.header.company"
+          integration.request.header.code: "method.request.header.code"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
   /enrollments/plan-change:
     put:
       tags:
@@ -220,7 +291,125 @@ paths:
           schema:
             $ref: "#/definitions/HealthPortalBasicResponseError"
       x-amazon-apigateway-integration:
-        $ref: "#/definitions/AmazonApiGatewayIntegration/x-amazon-apigateway-integration"
+        connectionId: "${stageVariables.vpcId}"
+        httpMethod: "POST"
+        uri: "https://${stageVariables.url}/enrollments/plan-change"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.type: "method.request.header.type"
+          integration.request.header.access-token: "method.request.header.access-token"
+          integration.request.header.company: "method.request.header.company"
+          integration.request.header.code: "method.request.header.code"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
+  /files:
+    post:
+      tags:
+        - "Files Manager Resources"
+      summary: "Serviço para criação de arquivo"
+      operationId: "createFile"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/parameters/accessToken"
+        - $ref: "#/parameters/company"
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/code"
+        - in: "body"
+          name: "CreateFile"
+          description: "Create File Data Request"
+          required: true
+          schema:
+            $ref: "#/definitions/FileRequest"
+      responses:
+        201:
+          description: "Successfully create a dependent"
+          schema:
+            $ref: "#/definitions/HealthPortalBasicResponseSuccess"
+        400:
+          description: "Invalid request or insufficient permissions"
+          schema:
+            $ref: "#/definitions/HealthPortalBasicResponseError"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/HealthPortalBasicResponseCreateFileError"
+        504:
+          description: "Timeout"
+          schema:
+            $ref: "#/definitions/HealthPortalBasicResponseError"
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.vpcId}"
+        httpMethod: "POST"
+        uri: "https://${stageVariables.url}/files"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.type: "method.request.header.type"
+          integration.request.header.access-token: "method.request.header.access-token"
+          integration.request.header.company: "method.request.header.company"
+          integration.request.header.code: "method.request.header.code"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
+  /enrichments:
+    post:
+      tags:
+        - "Data Enrichment Manager Resources"
+      summary: "Serviço de busca de dados por número de documento (CPF)"
+      operationId: "FetchEnrichmentData"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/parameters/accessToken"
+        - $ref: "#/parameters/company"
+        - $ref: "#/parameters/type"
+        - $ref: "#/parameters/code"
+        - name: "document"
+          in: "query"
+          type: "string"
+          description: "Documento do beneficiário"
+          required: true
+      responses:
+        200:
+          description: "Successfully fetch data"
+          schema:
+            $ref: "#/definitions/DataEnrichmentResponse"
+        400:
+          description: "Invalid request or insufficient permissions"
+          schema:
+            $ref: "#/definitions/HealthPortalBasicResponseError"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/HealthPortalBasicResponseError"
+        504:
+          description: "Timeout"
+          schema:
+            $ref: "#/definitions/HealthPortalBasicResponseError"
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.vpcId}"
+        httpMethod: "POST"
+        uri: "https://${stageVariables.url}/files"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.type: "method.request.header.type"
+          integration.request.header.access-token: "method.request.header.access-token"
+          integration.request.header.company: "method.request.header.company"
+          integration.request.header.code: "method.request.header.code"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
 definitions:
   CreateBeneficiaryRequest:
     title: Create Beneficiary Request
@@ -1489,7 +1678,7 @@ definitions:
       code:
         type: "string"
         description: "Código do erro"
-        example: "Código do erro [400, 404, 504]"
+        example: "INTERNAL_SERVER_ERROR"
       message:
         type: "string"
         description: "Mensagem de erro"
@@ -1554,16 +1743,187 @@ definitions:
         type: "string"
         description: "Mensagem de erro"
         example: "Change plan faield"
-  AmazonApiGatewayIntegration:
-    type: object
-    title: "Amazon Api Gateway Integration"
-    x-amazon-apigateway-integration:
-      connectionId: "${stageVariables.vpcId}"
-      httpMethod: "GET"
-      uri: "https://${stageVariables.url}/portal-business"
-      responses:
-        default:
-          statusCode: "200"
-      passthroughBehavior: "when_no_match"
-      connectionType: "VPC_LINK"
-      type: "http_proxy"
+  HealthPortalBasicResponseCreateFileError:
+    type: "object"
+    title: "Health Portal Basic Response Create File Error"
+    properties:
+      code:
+        type: "string"
+        description: "Código do erro"
+        example: "ERR_CREATE_FILE"
+      message:
+        type: "string"
+        description: "Mensagem de erro"
+        example: "Create file faield"
+  FileRequest:
+    type: "object"
+    title: "File Request"
+    properties:
+      name:
+        type: "string"
+        description: "Nome do arquivo"
+        example: "documento.pdf"
+      base64File:
+        type: "string"
+        description: "Arquivo em Base64"
+        example: "JVBERi0xLjcKJcfs..."
+      brokerCode:
+        type: "string"
+        description: "Código do corretor"
+        example: "BR12345"
+      companyGroupCode:
+        type: "integer"
+        format: "int32"
+        description: "Código do grupo da empresa"
+        example: 101
+      destination:
+        type: "string"
+        description: "Destino do arquivo"
+        example: "ponto interno"
+      gcdeFileId:
+        type: "string"
+        description: "ID do arquivo GCDE"
+        example: "GCDE123456789"
+      cnpj:
+        type: "string"
+        description: "Número do CNPJ"
+        example: "12.345.678/0001-99"
+      contractNumber:
+        type: "string"
+        description: "Número do contrato"
+        example: "CNT123456789"
+    required:
+      - name
+      - base64File
+      - brokerCode
+      - companyGroupCode
+      - destination
+      - gcdeFileId
+      - cnpj
+      - contractNumber
+  DataEnrichmentResponse:
+    type: "object"
+    title: "Data Enrichment Response"
+    properties:
+      birthDate:
+        type: "string"
+        description: "Data de nascimento do segurado"
+        example: "1990-01-01"
+      minor:
+        type: "boolean"
+        description: "Identifica se o segurado é menor de idade"
+        example: false
+      documentFound:
+        type: "boolean"
+        description: "Identifica se o documento do segurado foi encontrado"
+        example: true
+  BasicPortalBusinessResponse:
+    type: "object"
+    title: "Basic Portal Business Response"
+    properties:
+      cod:
+        type: "string"
+        description: "Code"
+        example: "0001"
+      name:
+        type: "string"
+        description: "Name"
+        example: "ResponseName"
+    required:
+      - cod
+      - name
+  SortObject:
+    type: "object"
+    title: "Sort Object"
+    properties:
+      sorted:
+        type: "boolean"
+        description: "Indica se a ordenação está habilitada"
+        example: true
+      unsorted:
+        type: "boolean"
+        description: "Indica se a ordenação está desabilitada"
+        example: false
+      empty:
+        type: "boolean"
+        description: "Indica se a ordenação está vazia"
+        example: false
+  PageableObject:
+    type: "object"
+    title: "Pageable Object"
+    properties:
+      sort:
+        $ref: "#/definitions/SortObject"
+      offset:
+        type: "integer"
+        format: "int64"
+        description: "Deslocamento do início da página"
+        example: 0
+      pageNumber:
+        type: "integer"
+        format: "int32"
+        description: "Número da página atual"
+        example: 0
+      pageSize:
+        type: "integer"
+        format: "int32"
+        description: "Número de elementos por página"
+        example: 15
+      paged:
+        type: "boolean"
+        description: "Indica se a paginação está habilitada"
+        example: true
+      unpaged:
+        type: "boolean"
+        description: "Indica se a paginação está desabilitada"
+        example: false
+  PageBasicPortalBusinessResponse:
+    type: "object"
+    title: "Page Basic Portal Business Response"
+    properties:
+      content:
+        type: "array"
+        items:
+          $ref: "#/definitions/BasicPortalBusinessResponse"
+        description: "Lista de respostas de negócios do portal básico"
+      pageable:
+        $ref: "#/definitions/PageableObject"
+      totalElements:
+        type: "integer"
+        format: "int64"
+        description: "Número total de elementos"
+        example: 100
+      totalPages:
+        type: "integer"
+        format: "int32"
+        description: "Número total de páginas"
+        example: 10
+      size:
+        type: "integer"
+        format: "int32"
+        description: "Número de elementos por página"
+        example: 15
+      number:
+        type: "integer"
+        format: "int32"
+        description: "Número da página atual"
+        example: 0
+      numberOfElements:
+        type: "integer"
+        format: "int32"
+        description: "Número de elementos na página atual"
+        example: 15
+      first:
+        type: "boolean"
+        description: "Indica se esta é a primeira página"
+        example: true
+      last:
+        type: "boolean"
+        description: "Indica se esta é a última página"
+        example: false
+      sort:
+        $ref: "#/definitions/SortObject"
+      empty:
+        type: "boolean"
+        description: "Indica se esta página está vazia"
+        example: false
